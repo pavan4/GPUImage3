@@ -120,7 +120,7 @@ public class MovieOutput: ImageConsumer, AudioEncodingTarget {
         
         // TODO: Run the following on an internal movie recording dispatch queue, context
         guard (assetWriterVideoInput.isReadyForMoreMediaData || (!encodingLiveVideo)) else {
-            debugPrint("Had to drop a frame at time \(frameTime)")
+            Log.info("Had to drop a frame at time \(frameTime)")
             return
         }
         
@@ -133,7 +133,7 @@ public class MovieOutput: ImageConsumer, AudioEncodingTarget {
         renderIntoPixelBuffer(pixelBuffer, texture:texture)
         
         if (!assetWriterPixelBufferInput.append(pixelBuffer, withPresentationTime:frameTime)) {
-            print("Problem appending pixel buffer at time: \(frameTime)")
+            Log.error("Problem appending pixel buffer at time: \(frameTime)")
         }
         
         CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags(rawValue: CVOptionFlags(0)))
@@ -141,7 +141,7 @@ public class MovieOutput: ImageConsumer, AudioEncodingTarget {
     
     func renderIntoPixelBuffer(_ pixelBuffer:CVPixelBuffer, texture:Texture) {
         guard let pixelBufferBytes = CVPixelBufferGetBaseAddress(pixelBuffer) else {
-            print("Could not get buffer bytes")
+            Log.error("Could not get buffer bytes")
             return
         }
 
@@ -151,7 +151,12 @@ public class MovieOutput: ImageConsumer, AudioEncodingTarget {
         if (Int(round(self.size.width)) != texture.texture.width) && (Int(round(self.size.height)) != texture.texture.height) {
             let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer()
             
-            outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: Int(round(self.size.width)), height: Int(round(self.size.height)), timingStyle: texture.timingStyle)
+            guard let aOutputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: Int(round(self.size.width)), height: Int(round(self.size.height)), timingStyle: texture.timingStyle) else {
+                Log.error("Could not create texture of size (\(Int(round(self.size.width))), \(Int(round(self.size.height)))")
+                return
+            }
+            
+            outputTexture = aOutputTexture
 
             commandBuffer?.renderQuad(pipelineState: renderPipelineState, inputTextures: [0:texture], outputTexture: outputTexture)
             commandBuffer?.commit()
@@ -193,7 +198,7 @@ public class MovieOutput: ImageConsumer, AudioEncodingTarget {
         }
         
         if (!assetWriterAudioInput.append(sampleBuffer)) {
-            print("Trouble appending audio sample buffer")
+            Log.error("Trouble appending audio sample buffer")
         }
     }
 }

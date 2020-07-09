@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F46A64E24B6A9AE0042F25A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F46A64D24B6A9AE0042F25A /* Log.swift */; };
+		1F46A64F24B6A9AE0042F25A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F46A64D24B6A9AE0042F25A /* Log.swift */; };
 		4C280F76213426D6001A985C /* Posterize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C280F75213426D6001A985C /* Posterize.swift */; };
 		4C280F77213426D6001A985C /* Posterize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C280F75213426D6001A985C /* Posterize.swift */; };
 		4C280F79213426EC001A985C /* Posterize.metal in Sources */ = {isa = PBXBuildFile; fileRef = 4C280F78213426EC001A985C /* Posterize.metal */; };
@@ -412,6 +414,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F46A64D24B6A9AE0042F25A /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Log.swift; path = Source/Log.swift; sourceTree = "<group>"; };
 		4C280F75213426D6001A985C /* Posterize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Posterize.swift; path = Source/Operations/Posterize.swift; sourceTree = "<group>"; };
 		4C280F78213426EC001A985C /* Posterize.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = Posterize.metal; path = Source/Operations/Posterize.metal; sourceTree = "<group>"; };
 		4CC48BED213433CB00817C34 /* StretchDistortion.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = StretchDistortion.metal; path = Source/Operations/StretchDistortion.metal; sourceTree = "<group>"; };
@@ -820,6 +823,7 @@
 				79E30E6B20F118CD005FA13C /* Texture.swift */,
 				795B05D720F270FF00D1E759 /* MetalRendering.swift */,
 				BC7BA27320F2BD1E006B5F4B /* ShaderUniformSettings.swift */,
+				1F46A64D24B6A9AE0042F25A /* Log.swift */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -1076,6 +1080,7 @@
 				96F24FF122007D6D0042E78D /* MedianFilter.swift in Sources */,
 				795ECABD21EF920B000EF927 /* Laplacian.metal in Sources */,
 				79DD50C7213450CB004EF308 /* SwirlDistortion.metal in Sources */,
+				1F46A64E24B6A9AE0042F25A /* Log.swift in Sources */,
 				79E30E6620F10F72005FA13C /* BasicOperation.swift in Sources */,
 				BCE0BEA820D6E3C80006E120 /* ImageOrientation.swift in Sources */,
 				799999862226FE9A007404F2 /* KuwaharaRadius3Filter.metal in Sources */,
@@ -1281,6 +1286,7 @@
 				795ECABE21EF920B000EF927 /* Laplacian.metal in Sources */,
 				79DD50C8213450CB004EF308 /* SwirlDistortion.metal in Sources */,
 				793D932620F66303008A7A6E /* Luminance.metal in Sources */,
+				1F46A64F24B6A9AE0042F25A /* Log.swift in Sources */,
 				BC67D91820F815B60046D2C4 /* RenderView.swift in Sources */,
 				79CB6DD62108B4090042F87B /* ColorDodgeBlend.metal in Sources */,
 				799999872226FE9A007404F2 /* KuwaharaRadius3Filter.metal in Sources */,

@@ -45,7 +45,7 @@ public extension ImageSource {
                 self.targets.append(target, indexAtTarget:indexAtTarget)
                 //transmitPreviousImage(to:target, atIndex:indexAtTarget)
             } else {
-                debugPrint("Warning: tried to add target beyond target's input capacity")
+                Log.warning("Tried to add target beyond target's input capacity")
             }
         }
     }

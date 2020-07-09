@@ -56,7 +56,7 @@ public class MovieInput: ImageSource {
                 guard (self.asset.statusOfValue(forKey: "tracks", error:nil) == .loaded) else { return }
 
                 guard self.assetReader.startReading() else {
-                    print("Couldn't start reading")
+                    Log.error("Couldn't start reading")
                     return
                 }
                 
@@ -165,7 +165,7 @@ public class MovieInput: ImageSource {
         
         let startTime = CFAbsoluteTimeGetCurrent()
 
-        let texture:Texture?
+        var texture:Texture? = nil
         var luminanceTextureRef:CVMetalTexture? = nil
         var chrominanceTextureRef:CVMetalTexture? = nil
         // Luminance plane
@@ -173,24 +173,26 @@ public class MovieInput: ImageSource {
         // Chrominance plane
         let _ = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, self.videoTextureCache!, movieFrame, nil, .rg8Unorm, bufferWidth / 2, bufferHeight / 2, 1, &chrominanceTextureRef)
         
-        if let concreteLuminanceTextureRef = luminanceTextureRef, let concreteChrominanceTextureRef = chrominanceTextureRef,
-            let luminanceTexture = CVMetalTextureGetTexture(concreteLuminanceTextureRef), let chrominanceTexture = CVMetalTextureGetTexture(concreteChrominanceTextureRef) {
-            let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:bufferWidth, height:bufferHeight, timingStyle:.videoFrame(timestamp:Timestamp(withSampleTime)))
+        if let concreteLuminanceTextureRef = luminanceTextureRef,
+            let concreteChrominanceTextureRef = chrominanceTextureRef,
+            let luminanceTexture = CVMetalTextureGetTexture(concreteLuminanceTextureRef),
+            let chrominanceTexture = CVMetalTextureGetTexture(concreteChrominanceTextureRef),
+            let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:bufferWidth, height:bufferHeight, timingStyle:.videoFrame(timestamp:Timestamp(withSampleTime))) {
             
             convertYUVToRGB(pipelineState:self.yuvConversionRenderPipelineState, lookupTable:self.yuvLookupTable,
                             luminanceTexture:Texture(orientation:.portrait, texture:luminanceTexture),
                             chrominanceTexture:Texture(orientation:.portrait, texture:chrominanceTexture),
                             resultTexture:outputTexture, colorConversionMatrix:conversionMatrix)
             texture = outputTexture
-        } else {
-            texture = nil
         }
-        
+        else {
+            Log.error("Could not get luminance/chrominance/output texture")
+        }
 
         CVPixelBufferUnlockBaseAddress(movieFrame, CVPixelBufferLockFlags(rawValue:CVOptionFlags(0)))
 
-        if texture != nil {
-            self.updateTargetsWithTexture(texture!)
+        if let texture = texture {
+            self.updateTargetsWithTexture(texture)
         }
         
         if self.runBenchmark {

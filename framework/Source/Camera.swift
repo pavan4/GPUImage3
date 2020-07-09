@@ -198,8 +198,21 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
                 // Chrominance plane
                 let _ = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, self.videoTextureCache!, cameraFrame, nil, .rg8Unorm, bufferWidth / 2, bufferHeight / 2, 1, &chrominanceTextureRef)
                 
-                if let concreteLuminanceTextureRef = luminanceTextureRef, let concreteChrominanceTextureRef = chrominanceTextureRef,
-                    let luminanceTexture = CVMetalTextureGetTexture(concreteLuminanceTextureRef), let chrominanceTexture = CVMetalTextureGetTexture(concreteChrominanceTextureRef) {
+                let outputWidth:Int
+                let outputHeight:Int
+                if (self.orientation ?? self.location.imageOrientation()).rotationNeeded(for:.portrait).flipsDimensions() {
+                    outputWidth = bufferHeight
+                    outputHeight = bufferWidth
+                } else {
+                    outputWidth = bufferWidth
+                    outputHeight = bufferHeight
+                }
+                
+                if let concreteLuminanceTextureRef = luminanceTextureRef,
+                    let concreteChrominanceTextureRef = chrominanceTextureRef,
+                    let luminanceTexture = CVMetalTextureGetTexture(concreteLuminanceTextureRef),
+                    let chrominanceTexture = CVMetalTextureGetTexture(concreteChrominanceTextureRef),
+                    let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:outputWidth, height:outputHeight, timingStyle: .videoFrame(timestamp: Timestamp(currentTime))) {
                     
                     let conversionMatrix:Matrix3x3
                     if (self.supportsFullYUVRange) {
@@ -208,37 +221,29 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
                         conversionMatrix = colorConversionMatrix601Default
                     }
                     
-                    let outputWidth:Int
-                    let outputHeight:Int
-                    if (self.orientation ?? self.location.imageOrientation()).rotationNeeded(for:.portrait).flipsDimensions() {
-                        outputWidth = bufferHeight
-                        outputHeight = bufferWidth
-                    } else {
-                        outputWidth = bufferWidth
-                        outputHeight = bufferHeight
-                    }
-                    let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:outputWidth, height:outputHeight, timingStyle: .videoFrame(timestamp: Timestamp(currentTime)))
-                    
                     convertYUVToRGB(pipelineState:self.yuvConversionRenderPipelineState!, lookupTable:self.yuvLookupTable,
                                     luminanceTexture:Texture(orientation: self.orientation ?? self.location.imageOrientation(), texture:luminanceTexture),
                                     chrominanceTexture:Texture(orientation: self.orientation ?? self.location.imageOrientation(), texture:chrominanceTexture),
                                     resultTexture:outputTexture, colorConversionMatrix:conversionMatrix)
                     texture = outputTexture
                 } else {
+                    Log.error("Could not get luminance/chrominance/output texture")
                     texture = nil
                 }
             } else {
                 var textureRef:CVMetalTexture? = nil
                 let _ = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, self.videoTextureCache!, cameraFrame, nil, .bgra8Unorm, bufferWidth, bufferHeight, 0, &textureRef)
-                if let concreteTexture = textureRef, let cameraTexture = CVMetalTextureGetTexture(concreteTexture) {
+                if let concreteTexture = textureRef,
+                    let cameraTexture = CVMetalTextureGetTexture(concreteTexture) {
                     texture = Texture(orientation: self.orientation ?? self.location.imageOrientation(), texture: cameraTexture, timingStyle: .videoFrame(timestamp: Timestamp(currentTime)))
                 } else {
+                    Log.error("Could not get bgra texture")
                     texture = nil
                 }
             }
             
-            if texture != nil {
-                self.updateTargetsWithTexture(texture!)
+            if let texture = texture {
+                self.updateTargetsWithTexture(texture)
             }
 
             if self.runBenchmark {

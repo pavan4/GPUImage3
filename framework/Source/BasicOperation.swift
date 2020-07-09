@@ -23,7 +23,7 @@ open class BasicOperation: ImageProcessingOperation {
     public var useMetalPerformanceShaders: Bool = false {
         didSet {
             if !sharedMetalRenderingDevice.metalPerformanceShadersAreSupported {
-                print("Warning: Metal Performance Shaders are not supported on this device")
+                Log.warning("Metal Performance Shaders are not supported on this device")
                 useMetalPerformanceShaders = false
             }
         }
@@ -78,9 +78,15 @@ open class BasicOperation: ImageProcessingOperation {
                 uniformSettings["aspectRatio"] = firstInputTexture.aspectRatio(for: outputRotation)
             }
             
-            guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {return}
-
-            let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: outputWidth, height: outputHeight, timingStyle: firstInputTexture.timingStyle)
+            guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {
+                Log.error("Could not create command buffer")
+                return
+            }
+            
+            guard let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: outputWidth, height: outputHeight, timingStyle: firstInputTexture.timingStyle) else {
+                Log.error("Could not create texture of size (\(outputWidth), \(outputHeight)")
+                return
+            }
             
             for (_, texture) in inputTextures {
                 // Pick userInfo from whichever input buffer has it
@@ -106,8 +112,14 @@ open class BasicOperation: ImageProcessingOperation {
             if let alternateRenderingFunction = metalPerformanceShaderPathway, useMetalPerformanceShaders {
                 var rotatedInputTextures: [UInt:Texture]
                 if (firstInputTexture.orientation.rotationNeeded(for:.portrait) != .noRotation) {
-                    let rotationOutputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: outputWidth, height: outputHeight)
-                    guard let rotationCommandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {return}
+                    guard let rotationOutputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: outputWidth, height: outputHeight) else {
+                        Log.error("Could not create texture of size: (\(outputWidth), \(outputHeight)")
+                        return
+                    }
+                    guard let rotationCommandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {
+                        Log.error("Could not create command buffer")
+                        return
+                    }
                     rotationCommandBuffer.renderQuad(pipelineState: sharedMetalRenderingDevice.passthroughRenderState, uniformSettings: uniformSettings, inputTextures: inputTextures, useNormalizedTextureCoordinates: useNormalizedTextureCoordinates, outputTexture: rotationOutputTexture)
                     rotationCommandBuffer.commit()
                     rotatedInputTextures = inputTextures

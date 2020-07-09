@@ -15,7 +15,7 @@ public enum TextureTimingStyle {
         }
     }
     
-    var timestamp:Timestamp? {
+    public var timestamp:Timestamp? {
         get {
             switch self {
             case .stillImage: return nil
@@ -38,7 +38,7 @@ public class Texture {
         self.timingStyle = timingStyle
     }
     
-    public init(device:MTLDevice, orientation: ImageOrientation, pixelFormat: MTLPixelFormat = .bgra8Unorm, width: Int, height: Int, mipmapped:Bool = false, timingStyle: TextureTimingStyle  = .stillImage) {
+    public init?(device:MTLDevice, orientation: ImageOrientation, pixelFormat: MTLPixelFormat = .bgra8Unorm, width: Int, height: Int, mipmapped:Bool = false, timingStyle: TextureTimingStyle  = .stillImage) {
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
                                                                          width: width,
                                                                          height: height,
@@ -46,7 +46,7 @@ public class Texture {
         textureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
         
         guard let newTexture = sharedMetalRenderingDevice.device.makeTexture(descriptor: textureDescriptor) else {
-            fatalError("Could not create texture of size: (\(width), \(height))")
+            return nil
         }
 
         self.orientation = orientation
@@ -112,10 +112,17 @@ extension Texture {
 }
 
 extension Texture {
-    func cgImage() -> CGImage {
+    func cgImage() -> CGImage? {
         // Flip and swizzle image
-        guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else { fatalError("Could not create command buffer on image rendering.")}
-        let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:self.orientation, width:self.texture.width, height:self.texture.height)
+        guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {
+            Log.error("Unable to generate CGImage: Could not create command buffer on image rendering.")
+            return nil
+        }
+
+        guard let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:self.orientation, width:self.texture.width, height:self.texture.height) else {
+            Log.error("Unable to generate CGImage: Could not create texture of size (\(self.texture.width), \(self.texture.height))")
+            return nil
+        }
         commandBuffer.renderQuad(pipelineState:sharedMetalRenderingDevice.colorSwizzleRenderState, uniformSettings:nil, inputTextures:[0:self], useNormalizedTextureCoordinates:true, outputTexture:outputTexture)
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
@@ -125,7 +132,10 @@ extension Texture {
         let outputBytes = UnsafeMutablePointer<UInt8>.allocate(capacity:imageByteSize)
         outputTexture.texture.getBytes(outputBytes, bytesPerRow: MemoryLayout<UInt8>.size * texture.width * 4, bytesPerImage:0, from: MTLRegionMake2D(0, 0, texture.width, texture.height), mipmapLevel: 0, slice: 0)
         
-        guard let dataProvider = CGDataProvider(dataInfo:nil, data:outputBytes, size:imageByteSize, releaseData:dataProviderReleaseCallback) else {fatalError("Could not create CGDataProvider")}
+        guard let dataProvider = CGDataProvider(dataInfo:nil, data:outputBytes, size:imageByteSize, releaseData:dataProviderReleaseCallback) else {
+            Log.error("Could not create CGDataProvider")
+            return nil
+        }
         let defaultRGBColorSpace = CGColorSpaceCreateDeviceRGB()
         return CGImage(width:texture.width, height:texture.height, bitsPerComponent:8, bitsPerPixel:32, bytesPerRow:4 * texture.width, space:defaultRGBColorSpace, bitmapInfo:CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue), provider:dataProvider, decode:nil, shouldInterpolate:false, intent:.defaultIntent)!
     }

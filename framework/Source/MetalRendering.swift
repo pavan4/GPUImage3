@@ -12,10 +12,11 @@ extension MTLCommandBuffer {
         renderPass.colorAttachments[0].storeAction = .store
         renderPass.colorAttachments[0].loadAction = .clear
         
-        print("Clear color: \(renderPass.colorAttachments[0].clearColor)")
+        Log.info("Clear color: \(renderPass.colorAttachments[0].clearColor)")
         
         guard let renderEncoder = self.makeRenderCommandEncoder(descriptor: renderPass) else {
-            fatalError("Could not create render encoder")
+            Log.error("Could not create render encoder")
+            return
         }
 //        renderEncoder.setRenderPipelineState(sharedMetalRenderingDevice.passthroughRenderState)
 
@@ -38,7 +39,8 @@ extension MTLCommandBuffer {
         renderPass.colorAttachments[0].loadAction = .clear
         
         guard let renderEncoder = self.makeRenderCommandEncoder(descriptor: renderPass) else {
-            fatalError("Could not create render encoder")
+            Log.error("Could not create render encoder")
+            return
         }
         renderEncoder.setFrontFacing(.counterClockwise)
         renderEncoder.setRenderPipelineState(pipelineState)
