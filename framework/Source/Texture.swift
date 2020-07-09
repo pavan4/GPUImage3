@@ -28,6 +28,7 @@ public enum TextureTimingStyle {
 public class Texture {
     public var timingStyle: TextureTimingStyle
     public var orientation: ImageOrientation
+    public var userInfo:[AnyHashable:Any]?
     
     public let texture: MTLTexture
     

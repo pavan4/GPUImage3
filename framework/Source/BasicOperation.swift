@@ -35,7 +35,9 @@ open class BasicOperation: ImageProcessingOperation {
     let textureInputSemaphore = DispatchSemaphore(value:1)
     var useNormalizedTextureCoordinates = true
     var metalPerformanceShaderPathway: ((MTLCommandBuffer, [UInt:Texture], Texture) -> ())?
-
+    
+    public private(set) var userInfo:[AnyHashable:Any]?
+    
     public init(vertexFunctionName: String? = nil, fragmentFunctionName: String, numberOfInputs: UInt = 1, operationName: String = #file) {
         self.maximumInputs = numberOfInputs
         self.operationName = operationName
@@ -79,6 +81,15 @@ open class BasicOperation: ImageProcessingOperation {
             guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {return}
 
             let outputTexture = Texture(device:sharedMetalRenderingDevice.device, orientation: .portrait, width: outputWidth, height: outputHeight, timingStyle: firstInputTexture.timingStyle)
+            
+            for (_, texture) in inputTextures {
+                // Pick userInfo from whichever input buffer has it
+                if let textureUserInfo = texture.userInfo {
+                    userInfo = textureUserInfo
+                }
+            }
+            // Pass onto the output texture
+            outputTexture.userInfo = userInfo
             
             guard (!activatePassthroughOnNextFrame) else { // Use this to allow a bootstrap of cyclical processing, like with a low pass filter
                 activatePassthroughOnNextFrame = false

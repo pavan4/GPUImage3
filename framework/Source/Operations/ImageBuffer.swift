@@ -7,8 +7,12 @@ public class ImageBuffer: ImageProcessingOperation {
     public let targets = TargetContainer()
     public let sources = SourceContainer()
     var bufferedTextures = [Texture]()
+    
+    public private(set) var userInfo:[AnyHashable:Any]?
 
     public func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
+        userInfo = texture.userInfo
+        
         bufferedTextures.append(texture)
         if (bufferedTextures.count > Int(bufferSize)) {
             let releasedTexture = bufferedTextures.removeFirst()
