@@ -744,7 +744,7 @@ let filterOperations: Array<FilterOperationInterface> = [
             let blendFilter = AlphaBlend()
             blendFilter.mix = 1.0
             
-            let inputImage = PictureInput(imageName:blendImageName)
+            let inputImage = try! PictureInput(imageName:blendImageName)
             
             inputImage --> blendFilter
             camera --> castFilter --> blendFilter --> outputView

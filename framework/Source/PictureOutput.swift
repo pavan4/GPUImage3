@@ -114,14 +114,14 @@ public extension ImageSource {
 }
 
 public extension PlatformImageType {
-    func filterWithOperation<T:ImageProcessingOperation>(_ operation:T) -> PlatformImageType {
-        return filterWithPipeline{input, output in
+    func filterWithOperation<T:ImageProcessingOperation>(_ operation:T) throws -> PlatformImageType {
+        return try filterWithPipeline{input, output in
             input --> operation --> output
         }
     }
     
-    func filterWithPipeline(_ pipeline:(PictureInput, PictureOutput) -> ()) -> PlatformImageType {
-        let picture = PictureInput(image:self)
+    func filterWithPipeline(_ pipeline:(PictureInput, PictureOutput) -> ()) throws -> PlatformImageType {
+        let picture = try PictureInput(image:self)
         var outputImage:PlatformImageType?
         let pictureOutput = PictureOutput()
         pictureOutput.onlyCaptureNextFrame = true
