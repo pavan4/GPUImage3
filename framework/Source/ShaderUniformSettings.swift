@@ -5,15 +5,23 @@ public class ShaderUniformSettings {
     let uniformLookupTable:[String:Int]
     private var uniformValues:[Float]
     private var uniformValueOffsets:[Int]
-    public var colorUniformsUseAlpha:Bool = false
+    public var colorUniformsUseAlpha:Bool {
+        get {
+            shaderUniformSettingsQueue.sync { return self._colorUniformsUseAlpha }
+        }
+        set {
+            shaderUniformSettingsQueue.async { self._colorUniformsUseAlpha = newValue }
+        }
+    }
+    private var _colorUniformsUseAlpha:Bool = false
     let shaderUniformSettingsQueue = DispatchQueue(
         label: "com.sunsetlakesoftware.GPUImage.shaderUniformSettings",
         attributes: [])
 
-    public init(uniformLookupTable:[String:(Int, MTLStructMember)], bufferSize: Int) {
+    public init(uniformLookupTable:[String:(Int, MTLStructMember)], bufferSize:Int) {
         var convertedLookupTable:[String:Int] = [:]
         
-        var orderedOffsets = [Int](repeating: 0, count: uniformLookupTable.count)
+        var orderedOffsets = [Int](repeating:0, count:uniformLookupTable.count)
         
         for (key, uniform) in uniformLookupTable {
             let (index, structMember) = uniform
@@ -26,7 +34,7 @@ public class ShaderUniformSettings {
         self.uniformValueOffsets = orderedOffsets
     }
     
-    public var usesAspectRatio:Bool { get { return self.uniformLookupTable["aspectRatio"] != nil } }
+    public var usesAspectRatio:Bool { get { shaderUniformSettingsQueue.sync { return self.uniformLookupTable["aspectRatio"] != nil } } }
     
     private func internalIndex(for index:Int) -> Int {
         return uniformValueOffsets[index]
@@ -37,8 +45,10 @@ public class ShaderUniformSettings {
     
     public subscript(key:String) -> Float {
         get {
-            guard let index = uniformLookupTable[key] else {fatalError("Tried to access value of missing uniform: \(key), make sure this is present and used in your shader.")}
-            return uniformValues[internalIndex(for:index)]
+            shaderUniformSettingsQueue.sync {
+                guard let index = uniformLookupTable[key] else {fatalError("Tried to access value of missing uniform: \(key), make sure this is present and used in your shader.")}
+                return uniformValues[internalIndex(for:index)]
+            }
         }
         set(newValue) {
             shaderUniformSettingsQueue.async {
@@ -58,7 +68,7 @@ public class ShaderUniformSettings {
                 let floatArray:[Float]
                 guard let index = self.uniformLookupTable[key] else {fatalError("Tried to access value of missing uniform: \(key), make sure this is present and used in your shader.")}
                 let startingIndex = self.internalIndex(for:index)
-                if self.colorUniformsUseAlpha {
+                if self._colorUniformsUseAlpha {
                     floatArray = newValue.toFloatArrayWithAlpha()
                     self.uniformValues[startingIndex] = floatArray[0]
                     self.uniformValues[startingIndex + 1] = floatArray[1]
