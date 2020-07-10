@@ -133,7 +133,7 @@ extension Texture {
         outputTexture.texture.getBytes(outputBytes, bytesPerRow: MemoryLayout<UInt8>.size * texture.width * 4, bytesPerImage:0, from: MTLRegionMake2D(0, 0, texture.width, texture.height), mipmapLevel: 0, slice: 0)
         
         guard let dataProvider = CGDataProvider(dataInfo:nil, data:outputBytes, size:imageByteSize, releaseData:dataProviderReleaseCallback) else {
-            Log.error("Could not create CGDataProvider")
+            Log.error("Unable to generate CGImage: Could not create CGDataProvider")
             return nil
         }
         let defaultRGBColorSpace = CGColorSpaceCreateDeviceRGB()
