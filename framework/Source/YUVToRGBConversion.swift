@@ -22,7 +22,7 @@ public let colorConversionMatrix709Default = Matrix3x3(rowMajorValues:[
 ])
 
 public func convertYUVToRGB(pipelineState:MTLRenderPipelineState, lookupTable:[String:(Int, MTLStructMember)], bufferSize: Int, luminanceTexture:Texture, chrominanceTexture:Texture, secondChrominanceTexture:Texture? = nil, resultTexture:Texture, colorConversionMatrix:Matrix3x3) {
-    let uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable, bufferSize: bufferSize)
+    let uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable, bufferSize:bufferSize)
     uniformSettings["colorConversionMatrix"] = colorConversionMatrix
     
     guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {return}

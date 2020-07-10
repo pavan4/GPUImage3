@@ -45,7 +45,7 @@ open class BasicOperation: ImageProcessingOperation {
         let concreteVertexFunctionName = vertexFunctionName ?? defaultVertexFunctionNameForInputs(numberOfInputs)
         let (pipelineState, lookupTable, bufferSize) = generateRenderPipelineState(device:sharedMetalRenderingDevice, vertexFunctionName:concreteVertexFunctionName, fragmentFunctionName:fragmentFunctionName, operationName:operationName)
         self.renderPipelineState = pipelineState
-        self.uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable, bufferSize: bufferSize)
+        self.uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable, bufferSize:bufferSize)
     }
     
     public func transmitPreviousImage(to target: ImageConsumer, atIndex: UInt) {
