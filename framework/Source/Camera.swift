@@ -2,7 +2,7 @@ import Foundation
 import AVFoundation
 import Metal
 
-public protocol CameraDelegate {
+public protocol CameraDelegate: class {
     func didCaptureBuffer(_ sampleBuffer: CMSampleBuffer)
 }
 
@@ -12,9 +12,9 @@ public enum PhysicalCameraLocation {
     
     func imageOrientation() -> ImageOrientation {
         switch self {
-            case .backFacing: return .landscapeRight
+            case .backFacing: return .portrait
 #if os(iOS)
-            case .frontFacing: return .landscapeLeft
+            case .frontFacing: return .portrait
 #else
             case .frontFacing: return .portrait
 #endif
@@ -40,13 +40,26 @@ public enum PhysicalCameraLocation {
     }
 }
 
-public struct CameraError: Error {
+public enum CameraError: Error, CustomStringConvertible {
+    case avCaptureDeviceNotFound
+    
+    public var errorDescription:String {
+        switch self {
+        case .avCaptureDeviceNotFound:
+            return "The AVCaptureDevice could not be found. Camera is not supported on Simulator."
+        }
+    }
+    
+    public var description:String {
+        return "<\(type(of: self)): errorDescription = \(self.errorDescription)>"
+    }
 }
 
 let initialBenchmarkFramesToIgnore = 5
 
 
-public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBufferDelegate {
+public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBufferDelegate,
+    AVCaptureAudioDataOutputSampleBufferDelegate {
 
     public var location:PhysicalCameraLocation {
         didSet {
@@ -56,14 +69,31 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     public var runBenchmark:Bool = false
     public var logFPS:Bool = false
     
+    public var audioEncodingTarget:AudioEncodingTarget? {
+        didSet {
+            guard let audioEncodingTarget = audioEncodingTarget else {
+                return
+            }
+            do {
+                try self.addAudioInputsAndOutputs()
+                audioEncodingTarget.activateAudioTrack()
+            } catch {
+                Log.error("Could not connect audio target with error: \(error)")
+            }
+        }
+    }
+    
     public let targets = TargetContainer()
-    public var delegate: CameraDelegate?
+    public weak var delegate: CameraDelegate?
     public let captureSession:AVCaptureSession
     public var orientation:ImageOrientation?
     public let inputCamera:AVCaptureDevice!
-    let videoInput:AVCaptureDeviceInput!
-    let videoOutput:AVCaptureVideoDataOutput!
+    public let videoInput:AVCaptureDeviceInput!
+    public let videoOutput:AVCaptureVideoDataOutput!
     var videoTextureCache: CVMetalTextureCache?
+    public var microphone:AVCaptureDevice?
+    public var audioInput:AVCaptureDeviceInput?
+    public var audioOutput:AVCaptureAudioDataOutput?
     
     var supportsFullYUVRange:Bool = false
     let captureAsYUV:Bool
@@ -73,6 +103,7 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     
     let frameRenderingSemaphore = DispatchSemaphore(value:1)
     let cameraProcessingQueue = DispatchQueue.global()
+    let audioProcessingQueue = DispatchQueue.global()
     let cameraFrameProcessingQueue = DispatchQueue(
         label: "com.sunsetlakesoftware.GPUImage.cameraFrameProcessingQueue",
         attributes: [])
@@ -103,7 +134,7 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
                 self.inputCamera = nil
                 self.yuvConversionRenderPipelineState = nil
                 super.init()
-                throw CameraError()
+                throw CameraError.avCaptureDeviceNotFound
             }
         }
         
@@ -159,6 +190,21 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
         }
         
         captureSession.sessionPreset = sessionPreset
+        
+        var captureConnection: AVCaptureConnection!
+        for connection in videoOutput.connections {
+            for port in connection.inputPorts {
+                if port.mediaType == AVMediaType.video {
+                    captureConnection = connection
+                    captureConnection.isVideoMirrored = location == .frontFacing
+                }
+            }
+        }
+        
+        if captureConnection.isVideoOrientationSupported {
+            captureConnection.videoOrientation = .portrait
+        }
+        
         captureSession.commitConfiguration()
         
         super.init()
@@ -169,13 +215,19 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     }
     
     deinit {
-        cameraFrameProcessingQueue.sync {
-            self.stopCapture()
-            self.videoOutput?.setSampleBufferDelegate(nil, queue:nil)
-        }
+        // Don't call this on the cameraFrameProcessingQueue otherwise you may get a deadlock since this waits for the captureOutput() delegate call to finish.
+        self.stopCapture()
+        
+        self.videoOutput?.setSampleBufferDelegate(nil, queue:nil)
+        self.audioOutput?.setSampleBufferDelegate(nil, queue:nil)
     }
     
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        
+        guard (output != audioOutput) else {
+            self.processAudioSampleBuffer(sampleBuffer)
+            return
+        }
         
         guard (frameRenderingSemaphore.wait(timeout:DispatchTime.now()) == DispatchTimeoutResult.success) else { return }
         
@@ -274,11 +326,8 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     }
     
     public func startCapture() {
-        
-        let _ = frameRenderingSemaphore.wait(timeout:DispatchTime.distantFuture)
         self.numberOfFramesCaptured = 0
         self.totalFrameTimeDuringCapture = 0
-        self.frameRenderingSemaphore.signal()
         
         if (!captureSession.isRunning) {
             captureSession.startRunning()
@@ -287,14 +336,54 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
     
     public func stopCapture() {
         if (captureSession.isRunning) {
-            let _ = frameRenderingSemaphore.wait(timeout:DispatchTime.distantFuture)
-            
             captureSession.stopRunning()
-            self.frameRenderingSemaphore.signal()
         }
     }
 
     public func transmitPreviousImage(to target: ImageConsumer, atIndex: UInt) {
         // Not needed for camera
+    }
+    
+    // MARK: -
+    // MARK: Audio processing
+    
+    public func addAudioInputsAndOutputs() throws {
+        guard (self.audioOutput == nil) else { return }
+        
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        guard let microphone = AVCaptureDevice.default(for: .audio) else {
+            return
+        }
+        let audioInput = try AVCaptureDeviceInput(device:microphone)
+        if captureSession.canAddInput(audioInput) {
+           captureSession.addInput(audioInput)
+        }
+        let audioOutput = AVCaptureAudioDataOutput()
+        if captureSession.canAddOutput(audioOutput) {
+            captureSession.addOutput(audioOutput)
+        }
+        self.microphone = microphone
+        self.audioInput = audioInput
+        self.audioOutput = audioOutput
+        audioOutput.setSampleBufferDelegate(self, queue:audioProcessingQueue)
+    }
+    
+    public func removeAudioInputsAndOutputs() {
+        guard (audioOutput != nil) else { return }
+        
+        captureSession.beginConfiguration()
+        captureSession.removeInput(audioInput!)
+        captureSession.removeOutput(audioOutput!)
+        audioInput = nil
+        audioOutput = nil
+        microphone = nil
+        captureSession.commitConfiguration()
+    }
+    
+    func processAudioSampleBuffer(_ sampleBuffer:CMSampleBuffer) {
+        self.audioEncodingTarget?.processAudioBuffer(sampleBuffer)
     }
 }

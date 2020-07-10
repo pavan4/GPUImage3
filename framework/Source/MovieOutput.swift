@@ -3,11 +3,17 @@ import AVFoundation
 public protocol AudioEncodingTarget {
     func activateAudioTrack()
     func processAudioBuffer(_ sampleBuffer:CMSampleBuffer)
+    // Note: This is not used for synchronized encoding.
+    func readyForNextAudioBuffer() -> Bool
 }
 
 public class MovieOutput: ImageConsumer, AudioEncodingTarget {
     public let sources = SourceContainer()
     public let maximumInputs:UInt = 1
+    
+    public func readyForNextAudioBuffer() -> Bool {
+        return true
+    }
     
     let assetWriter:AVAssetWriter
     let assetWriterVideoInput:AVAssetWriterInput
