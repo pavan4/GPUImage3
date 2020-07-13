@@ -36,7 +36,22 @@ open class BasicOperation: ImageProcessingOperation {
     var useNormalizedTextureCoordinates = true
     var metalPerformanceShaderPathway: ((MTLCommandBuffer, [UInt:Texture], Texture) -> ())?
     
-    public private(set) var userInfo:[AnyHashable:Any]?
+    public private(set) var userInfo:[AnyHashable:Any]? {
+        get {
+            let aUserInfo:[AnyHashable:Any]?
+            _userInfoLock.lock()
+            aUserInfo = _userInfo
+            _userInfoLock.unlock()
+            return aUserInfo
+        }
+        set {
+            _userInfoLock.lock()
+            _userInfo = newValue
+            _userInfoLock.unlock()
+        }
+    }
+    var _userInfo:[AnyHashable:Any]?
+    var _userInfoLock = NSLock()
     
     public init(vertexFunctionName: String? = nil, fragmentFunctionName: String, numberOfInputs: UInt = 1, operationName: String = #file) {
         self.maximumInputs = numberOfInputs

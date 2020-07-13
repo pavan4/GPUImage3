@@ -190,7 +190,22 @@ public class ImageRelay: ImageProcessingOperation {
     public let maximumInputs:UInt = 1
     public var preventRelay:Bool = false
     
-    public private(set) var userInfo:[AnyHashable:Any]?
+    public private(set) var userInfo:[AnyHashable:Any]? {
+        get {
+            let aUserInfo:[AnyHashable:Any]?
+            _userInfoLock.lock()
+            aUserInfo = _userInfo
+            _userInfoLock.unlock()
+            return aUserInfo
+        }
+        set {
+            _userInfoLock.lock()
+            _userInfo = newValue
+            _userInfoLock.unlock()
+        }
+    }
+    var _userInfo:[AnyHashable:Any]?
+    var _userInfoLock = NSLock()
     
     public init() {
     }

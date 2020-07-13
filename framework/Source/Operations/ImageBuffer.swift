@@ -1,3 +1,5 @@
+import Foundation
+
 public class ImageBuffer: ImageProcessingOperation {
     // TODO: Dynamically release textures on buffer resize
     public var bufferSize:UInt = 1
@@ -8,7 +10,22 @@ public class ImageBuffer: ImageProcessingOperation {
     public let sources = SourceContainer()
     var bufferedTextures = [Texture]()
     
-    public private(set) var userInfo:[AnyHashable:Any]?
+    public private(set) var userInfo:[AnyHashable:Any]? {
+        get {
+            let aUserInfo:[AnyHashable:Any]?
+            _userInfoLock.lock()
+            aUserInfo = _userInfo
+            _userInfoLock.unlock()
+            return aUserInfo
+        }
+        set {
+            _userInfoLock.lock()
+            _userInfo = newValue
+            _userInfoLock.unlock()
+        }
+    }
+    var _userInfo:[AnyHashable:Any]?
+    var _userInfoLock = NSLock()
 
     public func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
         userInfo = texture.userInfo
