@@ -210,18 +210,3 @@ public class MovieInput: ImageSource {
         // Not needed for movie inputs
     }
 }
-
-public extension Timestamp {
-    init(_ time:CMTime) {
-        self.value = time.value
-        self.timescale = time.timescale
-        self.flags = TimestampFlags(rawValue:time.flags.rawValue)
-        self.epoch = time.epoch
-    }
-    
-    var asCMTime:CMTime {
-        get {
-            return CMTimeMakeWithEpoch(value: value, timescale: timescale, epoch: epoch)
-        }
-    }
-}

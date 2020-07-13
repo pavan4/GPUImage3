@@ -1172,7 +1172,7 @@ let filterOperations: Array<FilterOperationInterface> = [
         sliderConfiguration:.disabled,
         sliderUpdateCallback: nil,
         filterOperationType:.custom(filterSetupFunction:{(camera, filter, outputView) in
-            let solidColorGenerator = SolidColorGenerator(size:Size(width: 400, height: 400))
+            let solidColorGenerator = SolidColorGenerator(size:Size(width: 400, height: 400))!
             solidColorGenerator --> outputView
             solidColorGenerator.renderColor(Color.red)
 //            solidColorGenerator --> (filter as! GammaAdjustment) --> outputView

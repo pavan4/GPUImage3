@@ -71,18 +71,6 @@ public extension ImageSource {
     }
     
     func updateTargetsWithTexture(_ texture:Texture) {
-//        let targets = self.targets.targets
-//
-//        if targets.count == 0 { // Deal with the case where no targets are attached by immediately returning framebuffer to cache
-//            framebuffer.lock()
-//            framebuffer.unlock()
-//        } else {
-//            // Lock first for each output, to guarantee proper ordering on multi-output operations
-//            for _ in targets {
-//                framebuffer.lock()
-//            }
-//        }
-        
         var targets = [(ImageConsumer, UInt)]()
         
         pipelineProcessingQueue.sync {

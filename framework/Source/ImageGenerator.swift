@@ -4,9 +4,13 @@ public class ImageGenerator: ImageSource {
     public let targets = TargetContainer()
     var internalTexture:Texture!
 
-    public init(size:Size) {
+    public init?(size:Size) {
         self.size = size
         internalTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:Int(size.width), height:Int(size.height), timingStyle:.stillImage)
+        
+        if internalTexture == nil {
+            return nil
+        }
     }
     
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {

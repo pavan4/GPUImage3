@@ -23,13 +23,6 @@
 			remoteGlobalIDString = BC6E7CAB1C39A9D8006DF678;
 			remoteInfo = GPUImage_macOS;
 		};
-		BC9E369A1E525C9900B8604F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BC9E36911E525C9900B8604F /* GPUImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BC6E7CB51C39A9D8006DF678;
-			remoteInfo = GPUImageTests_macOS;
-		};
 		BC9E369C1E525C9900B8604F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BC9E36911E525C9900B8604F /* GPUImage.xcodeproj */;
@@ -37,18 +30,11 @@
 			remoteGlobalIDString = BC9E34E91E524A2200B8604F;
 			remoteInfo = GPUImage_iOS;
 		};
-		BC9E369E1E525C9900B8604F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BC9E36911E525C9900B8604F /* GPUImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BC9E34F11E524A2200B8604F;
-			remoteInfo = GPUImageTests_iOS;
-		};
 		BC9E36A01E525CAF00B8604F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BC9E36911E525C9900B8604F /* GPUImage.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = BC9E34E81E524A2200B8604F;
+			remoteGlobalIDString = BCE0BE7B20D6DE610006E120;
 			remoteInfo = GPUImage_iOS;
 		};
 /* End PBXContainerItemProxy section */
@@ -91,10 +77,8 @@
 		BC9E36921E525C9900B8604F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BC9E36991E525C9900B8604F /* GPUImage.framework */,
-				BC9E369B1E525C9900B8604F /* GPUImageTests_macOS.xctest */,
 				BC9E369D1E525C9900B8604F /* GPUImage.framework */,
-				BC9E369F1E525C9900B8604F /* GPUImageTests_iOS.xctest */,
+				BC9E36991E525C9900B8604F /* GPUImage.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,6 +157,7 @@
 				TargetAttributes = {
 					BCA0C32F1CCBFFAE0034F922 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = FQ7WDPMYNA;
 						LastSwiftMigration = 0940;
 					};
 				};
@@ -182,6 +167,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -209,25 +195,11 @@
 			remoteRef = BC9E36981E525C9900B8604F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BC9E369B1E525C9900B8604F /* GPUImageTests_macOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = GPUImageTests_macOS.xctest;
-			remoteRef = BC9E369A1E525C9900B8604F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		BC9E369D1E525C9900B8604F /* GPUImage.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = GPUImage.framework;
 			remoteRef = BC9E369C1E525C9900B8604F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		BC9E369F1E525C9900B8604F /* GPUImageTests_iOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = GPUImageTests_iOS.xctest;
-			remoteRef = BC9E369E1E525C9900B8604F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -332,7 +304,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -382,7 +354,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -395,7 +367,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = FQ7WDPMYNA;
 				INFOPLIST_FILE = SimpleVideoRecorder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sunsetlakesoftware.SimpleVideoRecorder;
@@ -409,7 +381,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = FQ7WDPMYNA;
 				INFOPLIST_FILE = SimpleVideoRecorder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sunsetlakesoftware.SimpleVideoRecorder;

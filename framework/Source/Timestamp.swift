@@ -1,4 +1,5 @@
 import Foundation
+import AVFoundation
 
 // This reimplements CMTime such that it can reach across to Linux
 public struct TimestampFlags: OptionSet {
@@ -13,10 +14,10 @@ public struct TimestampFlags: OptionSet {
 }
 
 public struct Timestamp: Comparable {
-    let value:Int64
-    let timescale:Int32
-    let flags:TimestampFlags
-    let epoch:Int64
+    public let value:Int64
+    public let timescale:Int32
+    public let flags:TimestampFlags
+    public let epoch:Int64
     
     public init(value:Int64, timescale:Int32, flags:TimestampFlags, epoch:Int64) {
         self.value = value
@@ -25,12 +26,24 @@ public struct Timestamp: Comparable {
         self.epoch = epoch
     }
     
-    func seconds() -> Double {
+    public init(_ time:CMTime) {
+        self.value = time.value
+        self.timescale = time.timescale
+        self.flags = TimestampFlags(rawValue:time.flags.rawValue)
+        self.epoch = time.epoch
+    }
+    
+    public func seconds() -> Double {
         return Double(value) / Double(timescale)
     }
     
+    public var asCMTime:CMTime {
+        get {
+            return CMTimeMakeWithEpoch(value: value, timescale: timescale, epoch: epoch)
+        }
+    }
+    
     public static let zero = Timestamp(value: 0, timescale: 0, flags: .valid, epoch: 0)
-
 }
 
 public func ==(x:Timestamp, y:Timestamp) -> Bool {
