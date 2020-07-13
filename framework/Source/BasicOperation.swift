@@ -103,14 +103,16 @@ open class BasicOperation: ImageProcessingOperation {
                 return
             }
             
+            var foundUserInfo:[AnyHashable:Any]?
             for (_, texture) in inputTextures {
                 // Pick userInfo from whichever input buffer has it
                 if let textureUserInfo = texture.userInfo {
-                    userInfo = textureUserInfo
+                    foundUserInfo = textureUserInfo
                 }
             }
             // Pass onto the output texture
-            outputTexture.userInfo = userInfo
+            outputTexture.userInfo = foundUserInfo
+            userInfo = foundUserInfo
             
             guard (!activatePassthroughOnNextFrame) else { // Use this to allow a bootstrap of cyclical processing, like with a low pass filter
                 activatePassthroughOnNextFrame = false

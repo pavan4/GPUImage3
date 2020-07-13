@@ -14,6 +14,12 @@ public struct Position {
         self.y = y
         self.z = z
     }
+    
+    public init(point:CGPoint) {
+        self.x = Float(point.x)
+        self.y = Float(point.y)
+        self.z = nil
+    }
 
     public static let center = Position(0.5, 0.5)
     public static let zero = Position(0.0, 0.0)

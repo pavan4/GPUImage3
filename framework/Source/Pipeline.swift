@@ -226,11 +226,6 @@ public class ImageRelay: ImageProcessingOperation {
     }
     
     public func relayTextureOnward(_ texture:Texture) {
-        // Need to override to guarantee a removal of the previously applied lock
-//        for _ in targets {
-//            framebuffer.lock()
-//        }
-//        framebuffer.unlock()
         for (target, index) in targets.targets {
             target.newTextureAvailable(texture, fromSourceIndex:index)
         }
