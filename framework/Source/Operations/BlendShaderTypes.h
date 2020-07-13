@@ -1,3 +1,6 @@
+#include <metal_stdlib>
+using namespace metal;
+
 #ifndef BLENDSHADERTYPES_H
 #define BLENDSHADERTYPES_H
 
