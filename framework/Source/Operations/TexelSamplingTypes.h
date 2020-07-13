@@ -1,3 +1,5 @@
+#if __METAL_MACOS__ || __METAL_IOS__
+
 #include <metal_stdlib>
 using namespace metal;
 
@@ -22,3 +24,5 @@ struct NearbyTexelVertexIO
 };
 
 #endif /* TexelSamplingTypes_h */
+
+#endif /* __METAL_MACOS__ || __METAL_IOS__ */

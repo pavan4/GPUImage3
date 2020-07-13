@@ -1,3 +1,5 @@
+#if __METAL_MACOS__ || __METAL_IOS__
+
 #include <metal_stdlib>
 using namespace metal;
 
@@ -21,3 +23,5 @@ struct TwoInputVertexIO
 };
 
 #endif
+
+#endif /* __METAL_MACOS__ || __METAL_IOS__ */

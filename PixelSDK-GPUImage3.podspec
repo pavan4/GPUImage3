@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name     = 'PixelSDK-GPUImage3'
     s.module_name = 'GPUImage'
-    s.version  = '1.0.2'
+    s.version  = '1.0.3'
     s.license  = 'BSD'
     s.summary  = 'An open source iOS framework for GPU-based image and video processing.'
     s.homepage = 'https://github.com/GottaYotta/GPUImage3'
