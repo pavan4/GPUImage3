@@ -13,9 +13,9 @@ public enum PictureFileFormat {
 }
 
 public class PictureOutput: ImageConsumer {
-    public var encodedImageAvailableCallback:((Data) -> ())?
+    public var encodedImageAvailableCallback:((Data?) -> ())?
     public var encodedImageFormat:PictureFileFormat = .png
-    public var imageAvailableCallback:((PlatformImageType) -> ())?
+    public var imageAvailableCallback:((PlatformImageType?) -> ())?
     public var onlyCaptureNextFrame:Bool = true
     public var keepImageAroundForSynchronousCapture:Bool = false
     var storedTexture:Texture?
@@ -35,6 +35,11 @@ public class PictureOutput: ImageConsumer {
         encodedImageFormat = format
         self.url = url // Create an intentional short-term retain cycle to prevent deallocation before next frame is captured
         encodedImageAvailableCallback = {imageData in
+            guard let imageData = imageData else {
+                // TODO: Handle this better
+                Log.warning("Couldn't save image")
+                return
+            }
             do {
                 try imageData.write(to: self.url, options:.atomic)
             } catch {
@@ -50,41 +55,49 @@ public class PictureOutput: ImageConsumer {
             storedTexture = texture
         }
         
-        if let imageCallback = imageAvailableCallback,
-            let cgImageFromBytes = texture.cgImage() {
-            
-            // TODO: Let people specify orientations
-#if canImport(UIKit)
-            let image = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
-#else
-            let image = NSImage(cgImage:cgImageFromBytes, size:NSZeroSize)
-#endif
+        if let imageCallback = imageAvailableCallback {
+            if let cgImageFromBytes = texture.cgImage() {
+                
+                // TODO: Let people specify orientations
+    #if canImport(UIKit)
+                let image = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
+    #else
+                let image = NSImage(cgImage:cgImageFromBytes, size:NSZeroSize)
+    #endif
 
-            imageCallback(image)
+                imageCallback(image)
+            }
+            else {
+                imageCallback(nil)
+            }
             
             if onlyCaptureNextFrame {
                 imageAvailableCallback = nil
             }
         }
         
-        if let imageCallback = encodedImageAvailableCallback,
-            let cgImageFromBytes = texture.cgImage() {
-            
-            let imageData:Data
-#if canImport(UIKit)
-            let image = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
-            switch encodedImageFormat {
-            case .png: imageData = image.pngData()! // TODO: Better error handling here
-                case .jpeg: imageData = image.jpegData(compressionQuality: 0.8)! // TODO: Be able to set image quality
+        if let imageCallback = encodedImageAvailableCallback {
+            if let cgImageFromBytes = texture.cgImage() {
+                let imageData:Data?
+    #if canImport(UIKit)
+                let image = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
+                switch encodedImageFormat {
+                case .png:
+                    imageData = image.pngData()
+                    case .jpeg: imageData = image.jpegData(compressionQuality: 0.8) // TODO: Be able to set image quality
+                }
+    #else
+                let bitmapRepresentation = NSBitmapImageRep(cgImage:cgImageFromBytes)
+                switch encodedImageFormat {
+                    case .png: imageData = bitmapRepresentation.representation(using: .png, properties: [NSBitmapImageRep.PropertyKey(rawValue: ""):""])
+                    case .jpeg: imageData = bitmapRepresentation.representation(using: .jpeg, properties: [NSBitmapImageRep.PropertyKey(rawValue: ""):""])
+                }
+    #endif
+                imageCallback(imageData)
             }
-#else
-            let bitmapRepresentation = NSBitmapImageRep(cgImage:cgImageFromBytes)
-            switch encodedImageFormat {
-                case .png: imageData = bitmapRepresentation.representation(using: .png, properties: [NSBitmapImageRep.PropertyKey(rawValue: ""):""])!
-                case .jpeg: imageData = bitmapRepresentation.representation(using: .jpeg, properties: [NSBitmapImageRep.PropertyKey(rawValue: ""):""])!
+            else {
+                imageCallback(nil)
             }
-#endif
-            imageCallback(imageData)
             
             if onlyCaptureNextFrame {
                 encodedImageAvailableCallback = nil
@@ -114,13 +127,13 @@ public extension ImageSource {
 }
 
 public extension PlatformImageType {
-    func filterWithOperation<T:ImageProcessingOperation>(_ operation:T) throws -> PlatformImageType {
+    func filterWithOperation<T:ImageProcessingOperation>(_ operation:T) throws -> PlatformImageType? {
         return try filterWithPipeline{input, output in
             input --> operation --> output
         }
     }
     
-    func filterWithPipeline(_ pipeline:(PictureInput, PictureOutput) -> ()) throws -> PlatformImageType {
+    func filterWithPipeline(_ pipeline:(PictureInput, PictureOutput) -> ()) throws -> PlatformImageType? {
         let picture = try PictureInput(image:self)
         var outputImage:PlatformImageType?
         let pictureOutput = PictureOutput()
@@ -130,6 +143,6 @@ public extension PlatformImageType {
         }
         pipeline(picture, pictureOutput)
         picture.processImage(synchronously:true)
-        return outputImage!
+        return outputImage
     }
 }
