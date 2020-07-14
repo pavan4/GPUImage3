@@ -159,7 +159,7 @@ public class ShaderUniformSettings {
     // MARK: -
     // MARK: Uniform buffer memory management
 
-    public func restoreShaderSettings(renderEncoder:MTLRenderCommandEncoder) {
+    public func restoreShaderSettings(renderEncoder:MTLRenderCommandEncoder, vertexBufferIndex:Int) {
         shaderUniformSettingsQueue.sync {
             guard (uniformValues.count > 0) else { return }
             
@@ -167,6 +167,8 @@ public class ShaderUniformSettings {
                                                                              length: uniformValues.count * MemoryLayout<Float>.size,
                                                                              options: [])!
             renderEncoder.setFragmentBuffer(uniformBuffer, offset: 0, index: 1)
+            renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, index: vertexBufferIndex)
+            
         }
     }
 }

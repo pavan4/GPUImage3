@@ -2,6 +2,7 @@ import Foundation
 import Metal
 
 // OpenGL uses a bottom-left origin while Metal uses a top-left origin.
+// Top left, top right, bottom left, bottom right
 public let standardImageVertices:[Float] = [-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]
 
 extension MTLCommandBuffer {
@@ -60,7 +61,7 @@ extension MTLCommandBuffer {
             renderEncoder.setVertexBuffer(textureBuffer, offset: 0, index: 1 + textureIndex)
             renderEncoder.setFragmentTexture(currentTexture.texture, index: textureIndex)
         }
-        uniformSettings?.restoreShaderSettings(renderEncoder: renderEncoder)
+        uniformSettings?.restoreShaderSettings(renderEncoder: renderEncoder, vertexBufferIndex: 1 + inputTextures.count)
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         renderEncoder.endEncoding()
         
@@ -68,12 +69,14 @@ extension MTLCommandBuffer {
     }
 }
 
-public func generateRenderPipelineState(device:MetalRenderingDevice, vertexFunctionName:String, fragmentFunctionName:String, operationName:String) -> (MTLRenderPipelineState, [String:(Int, MTLStructMember)], Int) {
-    guard let vertexFunction = device.shaderLibrary.makeFunction(name: vertexFunctionName) else {
+public func generateRenderPipelineState(device:MetalRenderingDevice, vertexFunctionName:String, fragmentFunctionName:String, operationName:String, shaderLibrary:MTLLibrary? = nil) -> (MTLRenderPipelineState, [String:(Int, MTLStructMember)], Int) {
+    let shaderLibrary = shaderLibrary ?? device.shaderLibrary
+    
+    guard let vertexFunction = shaderLibrary.makeFunction(name: vertexFunctionName) else {
         fatalError("\(operationName): could not compile vertex function \(vertexFunctionName)")
     }
     
-    guard let fragmentFunction = device.shaderLibrary.makeFunction(name: fragmentFunctionName) else {
+    guard let fragmentFunction = shaderLibrary.makeFunction(name: fragmentFunctionName) else {
         fatalError("\(operationName): could not compile fragment function \(fragmentFunctionName)")
     }
     

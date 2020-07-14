@@ -4,7 +4,8 @@ open class TextureSamplingOperation: BasicOperation {
     override public init(vertexFunctionName: String? = "nearbyTexelSampling",
                 fragmentFunctionName: String,
                 numberOfInputs: UInt = 1,
-                operationName: String = #file) {
+                operationName: String = #file,
+                shaderLibrary: MTLLibrary? = nil) {
         super.init(vertexFunctionName:vertexFunctionName, fragmentFunctionName:fragmentFunctionName, numberOfInputs:numberOfInputs, operationName:operationName)
         self.useNormalizedTextureCoordinates = false
     }    

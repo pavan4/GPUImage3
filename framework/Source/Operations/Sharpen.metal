@@ -80,7 +80,7 @@ fragment half4 sharpenFragment(SharpenVertexIO fragmentInput [[stage_in]],
                               texture2d<half> inputTexture [[texture(0)]],
                               constant SharpenUniform& uniform [[buffer(1)]])
 {
-    constexpr sampler quadSampler(coord::pixel);
+    constexpr sampler quadSampler;
     half3 centerColor = inputTexture.sample(quadSampler, fragmentInput.textureCoordinate).rgb;
     half3 leftColor = inputTexture.sample(quadSampler, fragmentInput.leftTextureCoordinate).rgb;
     half3 rightColor = inputTexture.sample(quadSampler, fragmentInput.rightTextureCoordinate).rgb;
@@ -91,7 +91,7 @@ fragment half4 sharpenFragment(SharpenVertexIO fragmentInput [[stage_in]],
     half centerMultiplier = 1.0 + 4.0 * edgeMultiplier;
     
     return half4((centerColor * centerMultiplier
-                  - (leftColor * edgeMultiplier + rightColor * edgeMultiplier+ topColor * edgeMultiplier + bottomColor * edgeMultiplier)),
+                  - (leftColor * edgeMultiplier + rightColor * edgeMultiplier + topColor * edgeMultiplier + bottomColor * edgeMultiplier)),
                  inputTexture.sample(quadSampler, fragmentInput.bottomTextureCoordinate).w);
     
 }

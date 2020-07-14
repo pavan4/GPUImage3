@@ -29,11 +29,11 @@ open class BasicOperation: ImageProcessingOperation {
         }
     }
 
-    let renderPipelineState: MTLRenderPipelineState
+    public let renderPipelineState: MTLRenderPipelineState
     let operationName: String
-    var inputTextures = [UInt:Texture]()
+    public var inputTextures = [UInt:Texture]()
     let textureInputSemaphore = DispatchSemaphore(value:1)
-    var useNormalizedTextureCoordinates = true
+    public var useNormalizedTextureCoordinates = true
     var metalPerformanceShaderPathway: ((MTLCommandBuffer, [UInt:Texture], Texture) -> ())?
     
     public private(set) var userInfo:[AnyHashable:Any]? {
@@ -53,12 +53,12 @@ open class BasicOperation: ImageProcessingOperation {
     var _userInfo:[AnyHashable:Any]?
     var _userInfoLock = NSLock()
     
-    public init(vertexFunctionName: String? = nil, fragmentFunctionName: String, numberOfInputs: UInt = 1, operationName: String = #file) {
+    public init(vertexFunctionName: String? = nil, fragmentFunctionName: String, numberOfInputs: UInt = 1, operationName: String = #file, shaderLibrary:MTLLibrary? = nil) {
         self.maximumInputs = numberOfInputs
         self.operationName = operationName
         
         let concreteVertexFunctionName = vertexFunctionName ?? defaultVertexFunctionNameForInputs(numberOfInputs)
-        let (pipelineState, lookupTable, bufferSize) = generateRenderPipelineState(device:sharedMetalRenderingDevice, vertexFunctionName:concreteVertexFunctionName, fragmentFunctionName:fragmentFunctionName, operationName:operationName)
+        let (pipelineState, lookupTable, bufferSize) = generateRenderPipelineState(device:sharedMetalRenderingDevice, vertexFunctionName:concreteVertexFunctionName, fragmentFunctionName:fragmentFunctionName, operationName:operationName, shaderLibrary:shaderLibrary)
         self.renderPipelineState = pipelineState
         self.uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable, bufferSize:bufferSize)
     }
@@ -67,7 +67,7 @@ open class BasicOperation: ImageProcessingOperation {
         // TODO: Finish implementation later
     }
     
-    public func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
+    open func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
         let _ = textureInputSemaphore.wait(timeout:DispatchTime.distantFuture)
         defer {
             textureInputSemaphore.signal()
@@ -165,7 +165,7 @@ open class BasicOperation: ImageProcessingOperation {
         }
     }
     
-    func internalRenderFunction(commandBuffer: MTLCommandBuffer, outputTexture: Texture) {
+    open func internalRenderFunction(commandBuffer: MTLCommandBuffer, outputTexture: Texture) {
         commandBuffer.renderQuad(pipelineState: renderPipelineState, uniformSettings: uniformSettings, inputTextures: inputTextures, useNormalizedTextureCoordinates: useNormalizedTextureCoordinates, outputTexture: outputTexture)
     }
 }
