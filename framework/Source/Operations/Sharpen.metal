@@ -12,18 +12,23 @@ typedef struct
     float2 bottomTextureCoordinate [[user(bottomTextureCoordinate)]];
 }  SharpenVertexIO;
 
-
+typedef struct {
+    float texelWidth;
+    float texelHeight;
+    float sharpness;
+} SharpenUniform;
 
 vertex SharpenVertexIO sharpenVertex(const device packed_float2 *position [[buffer(0)]],
                                      const device packed_float2 *textureCoordinate [[buffer(1)]],
+                                     constant SharpenUniform& uniform [[ buffer(2) ]],
                                      uint vid [[vertex_id]])
 {
     SharpenVertexIO outputVertices;
     
     outputVertices.position = float4(position[vid], 0, 1.0);
     
-    float2 widthStep = float2(1.0, 0.0);
-    float2 heightStep = float2(0.0, 1.0);
+    float2 widthStep = float2(uniform.texelWidth, 0.0);
+    float2 heightStep = float2(0.0, uniform.texelHeight);
     
     outputVertices.textureCoordinate = textureCoordinate[vid];
     outputVertices.leftTextureCoordinate = textureCoordinate[vid] - widthStep;
@@ -71,10 +76,6 @@ vertex SharpenVertexIO sharpenVertex(const device packed_float2 *position [[buff
  }
 
  */
-
-typedef struct {
-    float sharpness;
-} SharpenUniform;
 
 fragment half4 sharpenFragment(SharpenVertexIO fragmentInput [[stage_in]],
                               texture2d<half> inputTexture [[texture(0)]],

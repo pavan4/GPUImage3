@@ -92,6 +92,13 @@ extension Texture {
 //        }
     }
 
+    public func texelSize(for rotation:Rotation) -> Size {
+        if rotation.flipsDimensions() {
+            return Size(width:1.0 / Float(texture.height), height:1.0 / Float(texture.width))
+        } else {
+            return Size(width:1.0 / Float(texture.width), height:1.0 / Float(texture.height))
+        }
+    }
     
 //    func croppedTextureCoordinates(offsetFromOrigin:Position, cropSize:Size) -> [Float] {
 //        let minX = offsetFromOrigin.x

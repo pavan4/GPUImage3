@@ -8,11 +8,12 @@ public class Sharpen: BasicOperation {
         ({sharpness = 0.0})()
     }
     
-    // Pretty sure this is OpenGL only
-//    override func configureFramebufferSpecificUniforms(_ inputFramebuffer:Framebuffer) {
-//        let outputRotation = overriddenOutputRotation ?? inputFramebuffer.orientation.rotationNeededForOrientation(.portrait)
-//        let texelSize = overriddenTexelSize ?? inputFramebuffer.texelSize(for:outputRotation)
-//        uniformSettings["texelWidth"] = texelSize.width
-//        uniformSettings["texelHeight"] = texelSize.height
-//    }
+    public override func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
+        let outputRotation = texture.orientation.rotationNeeded(for:.portrait)
+        let texelSize = texture.texelSize(for:outputRotation)
+        uniformSettings["texelWidth"] = texelSize.width
+        uniformSettings["texelHeight"] = texelSize.height
+        
+        super.newTextureAvailable(texture, fromSourceIndex: fromSourceIndex)
+    }
 }
