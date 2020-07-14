@@ -1,3 +1,5 @@
+import Metal
+
 open class TextureSamplingOperation: BasicOperation {
     // public var overriddenTexelSize:Size?
     
