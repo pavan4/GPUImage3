@@ -2,7 +2,7 @@ import Foundation
 import Metal
 
 // OpenGL uses a bottom-left origin while Metal uses a top-left origin.
-// Top left, top right, bottom left, bottom right
+// [TopLeft.x, TopLeft.y, TopRight.x, TopRight.y, BottomLeft.x, BottomLeft.y, BottomRight.x, BottomRight.y]
 public let standardImageVertices:[Float] = [-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]
 
 extension MTLCommandBuffer {

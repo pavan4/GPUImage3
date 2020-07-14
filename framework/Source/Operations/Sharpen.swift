@@ -10,7 +10,7 @@ public class Sharpen: BasicOperation {
     
     public override func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
         let outputRotation = texture.orientation.rotationNeeded(for:.portrait)
-        let texelSize = texture.texelSize(for:outputRotation)
+        let texelSize = overriddenTexelSize ?? texture.texelSize(for:outputRotation)
         uniformSettings["texelWidth"] = texelSize.width
         uniformSettings["texelHeight"] = texelSize.height
         
