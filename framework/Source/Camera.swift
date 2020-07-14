@@ -169,19 +169,19 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
                 self.yuvConversionRenderPipelineState = pipelineState
                 self.yuvLookupTable = lookupTable
                 self.yuvBufferSize = bufferSize
-                videoOutput.videoSettings = [kCVPixelBufferMetalCompatibilityKey as String: true,
+                videoOutput.videoSettings = [/*kCVPixelBufferMetalCompatibilityKey as String: true,*/
                                              kCVPixelBufferPixelFormatTypeKey as String:NSNumber(value:Int32(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange))]
             } else {
                 let (pipelineState, lookupTable, bufferSize) = generateRenderPipelineState(device:sharedMetalRenderingDevice, vertexFunctionName:"twoInputVertex", fragmentFunctionName:"yuvConversionVideoRangeFragment", operationName:"YUVToRGB")
                 self.yuvConversionRenderPipelineState = pipelineState
                 self.yuvLookupTable = lookupTable
                 self.yuvBufferSize = bufferSize
-                videoOutput.videoSettings = [kCVPixelBufferMetalCompatibilityKey as String: true,
+                videoOutput.videoSettings = [/*kCVPixelBufferMetalCompatibilityKey as String: true,*/
                                              kCVPixelBufferPixelFormatTypeKey as String:NSNumber(value:Int32(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange))]
             }
         } else {
             self.yuvConversionRenderPipelineState = nil
-            videoOutput.videoSettings = [kCVPixelBufferMetalCompatibilityKey as String: true,
+            videoOutput.videoSettings = [/*kCVPixelBufferMetalCompatibilityKey as String: true,*/
                                          kCVPixelBufferPixelFormatTypeKey as String:NSNumber(value:Int32(kCVPixelFormatType_32BGRA))]
         }
 
