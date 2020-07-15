@@ -29,7 +29,7 @@ public class RenderView: MTKView, ImageConsumer {
     
     private func commonInit() {
         framebufferOnly = false
-        autoResizeDrawable = true
+        autoResizeDrawable = false
         
         self.device = sharedMetalRenderingDevice.device
         
