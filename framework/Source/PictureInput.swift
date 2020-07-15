@@ -29,7 +29,9 @@ public class PictureInput: ImageSource {
     public var textureUserInfo:[AnyHashable:Any]?
     var hasProcessedImage:Bool = false
     var internalImage:CGImage?
-
+    
+    let pictureInputProcessingQueue = DispatchQueue(label: "com.sunsetlakesoftware.GPUImage.pictureInputProcessingQueue")
+    
     public init(image:CGImage, smoothlyScaleOutput:Bool = false, orientation:ImageOrientation = .portrait) {
         internalImage = image
     }
@@ -61,11 +63,15 @@ public class PictureInput: ImageSource {
         if let texture = internalTexture {
             texture.userInfo = self.textureUserInfo
             if synchronously {
-                self.updateTargetsWithTexture(texture)
+                autoreleasepool {
+                    self.updateTargetsWithTexture(texture)
+                }
                 self.hasProcessedImage = true
             } else {
-                DispatchQueue.global().async{
-                    self.updateTargetsWithTexture(texture)
+                self.pictureInputProcessingQueue.async {
+                    autoreleasepool {
+                        self.updateTargetsWithTexture(texture)
+                    }
                     self.hasProcessedImage = true
                 }
             }
@@ -96,8 +102,10 @@ public class PictureInput: ImageSource {
                     self.internalImage = nil
                     self.internalTexture = Texture(orientation: .portrait, texture: texture)
                     self.internalTexture?.userInfo = self.textureUserInfo
-                    DispatchQueue.global().async{
-                        self.updateTargetsWithTexture(self.internalTexture!)
+                    self.pictureInputProcessingQueue.async {
+                        autoreleasepool {
+                            self.updateTargetsWithTexture(self.internalTexture!)
+                        }
                         self.hasProcessedImage = true
                     }
                 })
