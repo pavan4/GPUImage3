@@ -47,19 +47,34 @@ public class RenderView: MTKView, ImageConsumer {
     }
     
     public override func draw(_ rect:CGRect) {
-        if let currentDrawable = self.currentDrawable, let imageTexture = currentTexture {
-            self.renderViewDelegate?.willDisplayTexture(renderView: self, texture: imageTexture)
+        // Necessary according to https://developer.apple.com/documentation/quartzcore/cametallayer
+        // Without this we were getting a deadlock when setting drawableSize
+        autoreleasepool {
+            guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else {
+                Log.warning("Could not make command buffer")
+                return
+            }
             
-            let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer()
+            guard let currentDrawable = self.currentDrawable else {
+                Log.warning("Could not retrieve current drawable")
+                return
+            }
+            
+            guard let currentTexture = self.currentTexture else {
+                Log.warning("Could not retrieve current texture")
+                return
+            }
+            
+            self.renderViewDelegate?.willDisplayTexture(renderView: self, texture: currentTexture)
             
             let outputTexture = Texture(orientation: .portrait, texture: currentDrawable.texture)
-            commandBuffer?.renderQuad(pipelineState: renderPipelineState, inputTextures: [0:imageTexture], outputTexture: outputTexture)
+            commandBuffer.renderQuad(pipelineState: renderPipelineState, inputTextures: [0:currentTexture], outputTexture: outputTexture)
             
-            commandBuffer?.present(currentDrawable)
-            commandBuffer?.addCompletedHandler({ (commandBuffer) in
-                self.renderViewDelegate?.didDisplayTexture(renderView: self, texture: imageTexture)
+            commandBuffer.present(currentDrawable)
+            commandBuffer.addCompletedHandler({ (commandBuffer) in
+                self.renderViewDelegate?.didDisplayTexture(renderView: self, texture: currentTexture)
             })
-            commandBuffer?.commit()
+            commandBuffer.commit()
         }
     }
 }

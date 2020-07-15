@@ -295,8 +295,10 @@ public class Camera: NSObject, ImageSource, AVCaptureVideoDataOutputSampleBuffer
             }
         }
         
-        if let texture = texture {
-            self.updateTargetsWithTexture(texture)
+        autoreleasepool {
+            if let texture = texture {
+                self.updateTargetsWithTexture(texture)
+            }
         }
 
         if self.runBenchmark {
