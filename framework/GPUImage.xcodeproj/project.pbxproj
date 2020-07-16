@@ -9,6 +9,18 @@
 /* Begin PBXBuildFile section */
 		1F46A64E24B6A9AE0042F25A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F46A64D24B6A9AE0042F25A /* Log.swift */; };
 		1F46A64F24B6A9AE0042F25A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F46A64D24B6A9AE0042F25A /* Log.swift */; };
+		1F5FA93B24C022720010E540 /* ThresholdNonMaximumSuppresssion.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93524C022720010E540 /* ThresholdNonMaximumSuppresssion.metal */; };
+		1F5FA93C24C022720010E540 /* ThresholdNonMaximumSuppresssion.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93524C022720010E540 /* ThresholdNonMaximumSuppresssion.metal */; };
+		1F5FA93D24C022720010E540 /* XYDerivative.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93624C022720010E540 /* XYDerivative.metal */; };
+		1F5FA93E24C022720010E540 /* XYDerivative.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93624C022720010E540 /* XYDerivative.metal */; };
+		1F5FA93F24C022720010E540 /* NobleCornerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93724C022720010E540 /* NobleCornerDetector.swift */; };
+		1F5FA94024C022720010E540 /* NobleCornerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93724C022720010E540 /* NobleCornerDetector.swift */; };
+		1F5FA94124C022720010E540 /* HarrisCornerDetector.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93824C022720010E540 /* HarrisCornerDetector.metal */; };
+		1F5FA94224C022720010E540 /* HarrisCornerDetector.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93824C022720010E540 /* HarrisCornerDetector.metal */; };
+		1F5FA94324C022720010E540 /* HarrisCornerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93924C022720010E540 /* HarrisCornerDetector.swift */; };
+		1F5FA94424C022720010E540 /* HarrisCornerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93924C022720010E540 /* HarrisCornerDetector.swift */; };
+		1F5FA94524C022720010E540 /* NobleCornerDetector.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93A24C022720010E540 /* NobleCornerDetector.metal */; };
+		1F5FA94624C022720010E540 /* NobleCornerDetector.metal in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FA93A24C022720010E540 /* NobleCornerDetector.metal */; };
 		1F89E69B24BC36D200105582 /* WhiteBalance.metal in Sources */ = {isa = PBXBuildFile; fileRef = 79A81C9C2101016100A3B43A /* WhiteBalance.metal */; };
 		1F89E69C24BC36D300105582 /* WhiteBalance.metal in Sources */ = {isa = PBXBuildFile; fileRef = 79A81C9C2101016100A3B43A /* WhiteBalance.metal */; };
 		1F89E69D24BD035C00105582 /* WhiteBalance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A81C992101015700A3B43A /* WhiteBalance.swift */; };
@@ -419,6 +431,12 @@
 
 /* Begin PBXFileReference section */
 		1F46A64D24B6A9AE0042F25A /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Log.swift; path = Source/Log.swift; sourceTree = "<group>"; };
+		1F5FA93524C022720010E540 /* ThresholdNonMaximumSuppresssion.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = ThresholdNonMaximumSuppresssion.metal; path = Source/Operations/ThresholdNonMaximumSuppresssion.metal; sourceTree = "<group>"; };
+		1F5FA93624C022720010E540 /* XYDerivative.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = XYDerivative.metal; path = Source/Operations/XYDerivative.metal; sourceTree = "<group>"; };
+		1F5FA93724C022720010E540 /* NobleCornerDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NobleCornerDetector.swift; path = Source/Operations/NobleCornerDetector.swift; sourceTree = "<group>"; };
+		1F5FA93824C022720010E540 /* HarrisCornerDetector.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = HarrisCornerDetector.metal; path = Source/Operations/HarrisCornerDetector.metal; sourceTree = "<group>"; };
+		1F5FA93924C022720010E540 /* HarrisCornerDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HarrisCornerDetector.swift; path = Source/Operations/HarrisCornerDetector.swift; sourceTree = "<group>"; };
+		1F5FA93A24C022720010E540 /* NobleCornerDetector.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = NobleCornerDetector.metal; path = Source/Operations/NobleCornerDetector.metal; sourceTree = "<group>"; };
 		1FE9A81B24BC0B7C00BBCDCA /* MovieInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieInput.swift; path = Source/MovieInput.swift; sourceTree = "<group>"; };
 		1FE9A81E24BC0B8300BBCDCA /* MovieOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieOutput.swift; path = Source/MovieOutput.swift; sourceTree = "<group>"; };
 		4C280F75213426D6001A985C /* Posterize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Posterize.swift; path = Source/Operations/Posterize.swift; sourceTree = "<group>"; };
@@ -789,6 +807,12 @@
 				795ECA9E21ED22BA000EF927 /* SobelEdgeDetection.metal */,
 				795ECAA121ED253B000EF927 /* ThresholdSobelEdgeDetection.swift */,
 				795ECAA421ED2549000EF927 /* ThresholdSobelEdgeDetection.metal */,
+				1F5FA93524C022720010E540 /* ThresholdNonMaximumSuppresssion.metal */,
+				1F5FA93624C022720010E540 /* XYDerivative.metal */,
+				1F5FA93824C022720010E540 /* HarrisCornerDetector.metal */,
+				1F5FA93924C022720010E540 /* HarrisCornerDetector.swift */,
+				1F5FA93A24C022720010E540 /* NobleCornerDetector.metal */,
+				1F5FA93724C022720010E540 /* NobleCornerDetector.swift */,
 			);
 			name = "Image processing";
 			sourceTree = "<group>";
@@ -1074,6 +1098,7 @@
 				BCCFEA6722AEEDF400C9F4CC /* PictureOutput.swift in Sources */,
 				795ECA9C21ED22AE000EF927 /* SobelEdgeDetection.swift in Sources */,
 				BCE0BEA620D6E3C80006E120 /* Matrix.swift in Sources */,
+				1F5FA94524C022720010E540 /* NobleCornerDetector.metal in Sources */,
 				79CB6E2F210A0D800042F87B /* SoftLightBlend.swift in Sources */,
 				795ECAAE21ED2E48000EF927 /* ThresholdSketch.swift in Sources */,
 				79CB6E14210931BE0042F87B /* NormalBlend.swift in Sources */,
@@ -1091,6 +1116,7 @@
 				79CB6DD52108B4090042F87B /* ColorDodgeBlend.metal in Sources */,
 				79CB6DF02109270C0042F87B /* HardLightBlend.swift in Sources */,
 				7957437120FBED78001EAE0A /* RGBAdjustment.metal in Sources */,
+				1F5FA93B24C022720010E540 /* ThresholdNonMaximumSuppresssion.metal in Sources */,
 				BCC6AB5F210E5E7900F9803A /* TextureSamplingOperation.swift in Sources */,
 				795ECACD21F02E54000EF927 /* PolkaDot.metal in Sources */,
 				BC25F8A422C166E400CBBD15 /* iOSBlur.swift in Sources */,
@@ -1108,6 +1134,7 @@
 				BCE0BEA220D6E3C80006E120 /* Position.swift in Sources */,
 				79CB6E1D210933B30042F87B /* OverlayBlend.metal in Sources */,
 				795ECAA821ED2967000EF927 /* Sketch.swift in Sources */,
+				1F5FA93D24C022720010E540 /* XYDerivative.metal in Sources */,
 				795ECABA21EF91FF000EF927 /* Laplacian.swift in Sources */,
 				795ECA7A21E90944000EF927 /* ZoomBlur.swift in Sources */,
 				79CB6E3E210A106B0042F87B /* SubtractBlend.metal in Sources */,
@@ -1162,6 +1189,7 @@
 				79DD50CA21345492004EF308 /* Vignette.swift in Sources */,
 				793D933520F68C1B008A7A6E /* ContrastAdjustment.swift in Sources */,
 				79A81CA321010A2E00A3B43A /* Vibrance.metal in Sources */,
+				1F5FA93F24C022720010E540 /* NobleCornerDetector.swift in Sources */,
 				79CB6DF3210927180042F87B /* HardLightBlend.metal in Sources */,
 				4CC48BEE213433CB00817C34 /* StretchDistortion.metal in Sources */,
 				795ECA9621ED176F000EF927 /* PolarPixellate.swift in Sources */,
@@ -1181,8 +1209,10 @@
 				793D932F20F68A21008A7A6E /* ExposureAdjustment.swift in Sources */,
 				79E30E6C20F118CD005FA13C /* Texture.swift in Sources */,
 				793D934120F693AD008A7A6E /* GammaAdjustment.swift in Sources */,
+				1F5FA94324C022720010E540 /* HarrisCornerDetector.swift in Sources */,
 				BCCFEA6222AEEDDB00C9F4CC /* Camera.swift in Sources */,
 				79A81CA62101266600A3B43A /* HighlightAndShadowTint.swift in Sources */,
+				1F5FA94124C022720010E540 /* HarrisCornerDetector.metal in Sources */,
 				1F89E69B24BC36D200105582 /* WhiteBalance.metal in Sources */,
 				79CB6E38210A0EDE0042F87B /* SourceOverBlend.metal in Sources */,
 				79CB6DD22108B3F00042F87B /* ColorDodgeBlend.swift in Sources */,
@@ -1282,6 +1312,7 @@
 				BCCFEA6822AEEDF400C9F4CC /* PictureOutput.swift in Sources */,
 				BCE0BEA720D6E3C80006E120 /* Matrix.swift in Sources */,
 				79CB6E30210A0D800042F87B /* SoftLightBlend.swift in Sources */,
+				1F5FA94624C022720010E540 /* NobleCornerDetector.metal in Sources */,
 				795ECAAF21ED2E48000EF927 /* ThresholdSketch.swift in Sources */,
 				79CB6E15210931BE0042F87B /* NormalBlend.swift in Sources */,
 				79CB6E0921092E330042F87B /* LuminosityBlend.swift in Sources */,
@@ -1299,6 +1330,7 @@
 				79CB6DF12109270C0042F87B /* HardLightBlend.swift in Sources */,
 				793D934520F693B8008A7A6E /* GammaAdjustment.metal in Sources */,
 				BCC6AB60210E5E7900F9803A /* TextureSamplingOperation.swift in Sources */,
+				1F5FA93C24C022720010E540 /* ThresholdNonMaximumSuppresssion.metal in Sources */,
 				795ECACC21F02E54000EF927 /* PolkaDot.metal in Sources */,
 				79CB6DE22108C9200042F87B /* DifferenceBlend.metal in Sources */,
 				BC25F8A522C166E400CBBD15 /* iOSBlur.swift in Sources */,
@@ -1316,6 +1348,7 @@
 				BC7BA28220F599DD006B5F4B /* MonochromeFilter.swift in Sources */,
 				79CB6E1E210933B30042F87B /* OverlayBlend.metal in Sources */,
 				795ECAA921ED2967000EF927 /* Sketch.swift in Sources */,
+				1F5FA93E24C022720010E540 /* XYDerivative.metal in Sources */,
 				795ECABB21EF91FF000EF927 /* Laplacian.swift in Sources */,
 				795ECA7B21E90944000EF927 /* ZoomBlur.swift in Sources */,
 				79CB6E3F210A106B0042F87B /* SubtractBlend.metal in Sources */,
@@ -1370,6 +1403,7 @@
 				79DD50CB21345492004EF308 /* Vignette.swift in Sources */,
 				793D933320F68A32008A7A6E /* ExposureAdjustment.metal in Sources */,
 				79A81CA421010A2E00A3B43A /* Vibrance.metal in Sources */,
+				1F5FA94024C022720010E540 /* NobleCornerDetector.swift in Sources */,
 				79CB6DF4210927180042F87B /* HardLightBlend.metal in Sources */,
 				4CC48BEF213433CB00817C34 /* StretchDistortion.metal in Sources */,
 				795ECA9721ED176F000EF927 /* PolarPixellate.swift in Sources */,
@@ -1389,8 +1423,10 @@
 				4C280F7A213426EC001A985C /* Posterize.metal in Sources */,
 				793D933920F68C70008A7A6E /* ContrastAdjustment.metal in Sources */,
 				793D933620F68C1B008A7A6E /* ContrastAdjustment.swift in Sources */,
+				1F5FA94424C022720010E540 /* HarrisCornerDetector.swift in Sources */,
 				BCCFEA6322AEEDDB00C9F4CC /* Camera.swift in Sources */,
 				79E30E6D20F118CD005FA13C /* Texture.swift in Sources */,
+				1F5FA94224C022720010E540 /* HarrisCornerDetector.metal in Sources */,
 				1F89E69C24BC36D300105582 /* WhiteBalance.metal in Sources */,
 				79A81CA72101266600A3B43A /* HighlightAndShadowTint.swift in Sources */,
 				BC7BA29420F6F2CB006B5F4B /* BrightnessAdjustment.metal in Sources */,
