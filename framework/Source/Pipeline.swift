@@ -211,7 +211,13 @@ public class ImageRelay: ImageProcessingOperation {
     }
     
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
-        sources.sources[0]?.transmitPreviousImage(to:self, atIndex:0)
+        var source: ImageSource?
+        
+        pipelineProcessingQueue.sync {
+            source = sources.sources[0]
+        }
+        
+        source?.transmitPreviousImage(to:self, atIndex:0)
     }
 
     public func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
@@ -226,7 +232,13 @@ public class ImageRelay: ImageProcessingOperation {
     }
     
     public func relayTextureOnward(_ texture:Texture) {
-        for (target, index) in targets.targets {
+        var targets = [(ImageConsumer, UInt)]()
+        
+        pipelineProcessingQueue.sync {
+            targets = self.targets.targets
+        }
+        
+        for (target, index) in targets {
             target.newTextureAvailable(texture, fromSourceIndex:index)
         }
     }
