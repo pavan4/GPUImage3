@@ -157,6 +157,7 @@
 				TargetAttributes = {
 					BC1E13071C9F5DB9008F844F = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = 3QG6M38N8P;
 						LastSwiftMigration = 0940;
 					};
 				};
@@ -166,6 +167,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -352,6 +354,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3QG6M38N8P;
 				INFOPLIST_FILE = SimpleImageFilter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sunsetlakesoftware.SimpleImageFilter;
@@ -366,6 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3QG6M38N8P;
 				INFOPLIST_FILE = SimpleImageFilter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sunsetlakesoftware.SimpleImageFilter;

@@ -14,22 +14,24 @@ class ViewController: UIViewController {
         // Filtering image for saving
         let testImage = UIImage(named:"WID-small.jpg")!
         let toonFilter = ToonFilter()
-        let filteredImage = testImage.filterWithOperation(toonFilter)
         
-        let pngImage = UIImagePNGRepresentation(filteredImage)!
         do {
+            let filteredImage = try testImage.filterWithOperation(toonFilter)
+            
+            let pngImage = try UIImagePNGRepresentation(filteredImage!)!
+            
             let documentsDir = try FileManager.default.url(for:.documentDirectory, in:.userDomainMask, appropriateFor:nil, create:true)
             let fileURL = URL(string:"test.png", relativeTo:documentsDir)!
             try pngImage.write(to:fileURL, options:.atomic)
+            
+            picture = try PictureInput(image:UIImage(named:"WID-small.jpg")!)
+            filter = SaturationAdjustment()
+            picture --> filter --> renderView
+            picture.processImage(synchronously: true)
+//            try _ = testImage.filterWithOperation(filter)
         } catch {
             print("Couldn't write to file with error: \(error)")
         }
-        
-        // Filtering image for display
-        picture = PictureInput(image:UIImage(named:"WID-small.jpg")!)
-        filter = SaturationAdjustment()
-        picture --> filter --> renderView
-        picture.processImage()
     }
 }
 

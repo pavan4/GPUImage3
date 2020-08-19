@@ -17,8 +17,8 @@ public class PictureOutput: ImageConsumer {
     public var encodedImageFormat:PictureFileFormat = .png
     public var imageAvailableCallback:((PlatformImageType?) -> ())?
     public var onlyCaptureNextFrame:Bool = true
-    public var keepImageAroundForSynchronousCapture:Bool = false
-    var storedTexture:Texture?
+    public var keepImageAroundForSynchronousCapture:Bool = true
+    public var storedTexture:Texture?
     
     public let sources = SourceContainer()
     public let maximumInputs:UInt = 1
